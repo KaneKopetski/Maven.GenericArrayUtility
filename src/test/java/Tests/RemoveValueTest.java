@@ -1,6 +1,8 @@
-package com.zipcodewilmington.arrayutility;
+package Tests;
 
-import com.zipcodewilmington.UnitTestingUtils;
+import com.zipcodewilmington.*;
+import com.zipcodewilmington.arrayutility.ArrayUtility;
+import com.zipcodewilmington.arrayutility.UnitTestingUtils;
 import org.junit.Test;
 
 /**
