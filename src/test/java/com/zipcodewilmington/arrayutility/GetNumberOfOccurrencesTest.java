@@ -1,4 +1,4 @@
-package Tests;
+package com.zipcodewilmington.arrayutility;
 
 import com.zipcodewilmington.arrayutility.ArrayUtility;
 import org.junit.Assert;

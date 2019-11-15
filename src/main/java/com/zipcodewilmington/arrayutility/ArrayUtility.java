@@ -1,54 +1,64 @@
 package com.zipcodewilmington.arrayutility;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
+import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 /**
  * Created by leon on 3/6/18.
  */
-public class ArrayUtility<E> {
-    List<E> inputList;
-    List<E> listToMerge;
-    List<E> mergedList;
+public class ArrayUtility<T> {
+    private T[] array;
 
-    public ArrayUtility(E[] inputArray) {
-        this.inputList = Arrays.asList(inputArray);
+    public ArrayUtility(T[] inputArray) {
+        this.array = inputArray;
     }
 
-    public Integer countDuplicatesInMerge(E[] arrayToMerge, E valueToEvaluate) {
-        listToMerge = Arrays.asList(arrayToMerge);
-        mergeLists();
-        Integer count = 0;
-        for (E element : mergedList) {
-            if (element.equals(valueToEvaluate)) {
-                count++;
-            }
-        }
-        return count;
+    public Integer countDuplicatesInMerge(T[] arrayToMerge, T valueToEvaluate) {
+        this.array = mergeArray(arrayToMerge);
+        return countDuplicates(valueToEvaluate);
     }
 
-    public List<E> mergeLists(){
-        mergedList = Stream.of(inputList, listToMerge)
-                .flatMap(x -> x.stream())
-                .collect(Collectors.toList());
-        return mergedList;
+    public T[] removeValue(T valueToRemove) {
+        return Arrays.stream(this.array)
+                .filter(item -> !item.equals(valueToRemove))
+                .toArray(this::getNewArray);
     }
 
-    public void printLists() {
-        for (E element1 : inputList) {
-            System.out.println(element1);
-        }
-
-        for (E element2 : listToMerge) {
-            System.out.println(element2);
-        }
-
-        for (E element3 : mergedList) {
-            System.out.println(element3);
-        }
+    private T[] getNewArray(Integer size){
+        return (T[])Array.newInstance(this.array.getClass().getComponentType(), size);
     }
+
+    private Integer countDuplicates(T valueToEvaluate){
+        return (int)Arrays.stream(this.array)
+                .filter(item -> item.equals(valueToEvaluate))
+                .count();
+    }
+
+    private T[] mergeArray(T[] arrayToMerge){
+        return Stream.concat(Arrays.stream(this.array), Arrays.stream(arrayToMerge))
+                .toArray(this::getNewArray);
+    }
+
+    private int getMaxDuplicateCount(){
+        return Arrays.stream(this.array)
+                .map(item -> countDuplicates(item))
+                .max(Comparator.naturalOrder()).orElse(0);
+    }
+
+    public Integer getNumberOfOccurrences(T value) {
+        return (int)Arrays.stream(this.array)
+                .filter(item -> item.equals(value))
+                .count();
+    }
+
+    public T getMostCommonFromMerge(T[] arrayToMerge) {
+        this.array = mergeArray(arrayToMerge);
+        Integer max = getMaxDuplicateCount();
+        return Arrays.stream(array)
+                .filter(item -> getNumberOfOccurrences(item) >= max)
+                .findFirst().orElse(null);
+    }
+
 }
